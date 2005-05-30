@@ -1,0 +1,9 @@
+# $Id: samplemudrc,v 1.1 2005/05/30 02:00:33 rwh Exp $
+# Sample MUD run-control file
+
+# Copy this file to ~/.mudrc after changing the values.
+dbhost=localhost
+dbname = mud
+dblogin = rohan
+
+port = 3000
