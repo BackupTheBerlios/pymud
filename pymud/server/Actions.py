@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-$Id: Actions.py,v 1.1 2005/05/30 02:00:35 rwh Exp $
+$Id: Actions.py,v 1.2 2005/06/28 00:41:39 rwh Exp $
 
 Generic acton structure.
 """
@@ -68,7 +68,7 @@ class ActionHandler(threading.Thread):
 		if self.noKeys:
 			pass
 		else:
-			if not key not in self.actionMap.keys():
+			if key not in self.actionMap.keys():
 				print "Unknown action '%s' attempted." % key
 			self.realStopAction(key)
 			frequency, actionFn = self.actionMap[action]
