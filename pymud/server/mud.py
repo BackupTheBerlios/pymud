@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-$Id: mud.py,v 1.1 2005/05/30 02:00:34 rwh Exp $
+$Id: mud.py,v 1.2 2005/08/07 07:16:37 rwh Exp $
 
 Game Client Handler code class and supporting functions
 """
@@ -206,7 +206,7 @@ class GameClient(ClientHandler):
 		if direction not in self.exits.keys():
 			self.write('%sYou want to go where?')
 			return
-		roomid, areaid = self.exits[direction]
+		areaid, roomid = self.exits[direction]
 		self.realMove(areaid, roomid)
 		self.look()
 

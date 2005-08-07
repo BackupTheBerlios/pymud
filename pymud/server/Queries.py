@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-$Id: Queries.py,v 1.1 2005/05/30 02:00:35 rwh Exp $
+$Id: Queries.py,v 1.2 2005/08/07 07:16:37 rwh Exp $
 
 Database queries.
 """
@@ -60,10 +60,7 @@ WHERE %(RoomID)s = %%(RoomID)s
 
 GetExits = """
 SELECT
-%(Exit1Names)s, %(Exit1Room)s,
-%(Exit2Names)s, %(Exit2Room)s,
-%(Exit3Names)s, %(Exit3Room)s,
-%(Exit4Names)s, %(Exit4Room)s
+%(Exits)s
 FROM %(Rooms)s
 WHERE %(RoomID)s = '%%(RoomID)s'
 """ % DC.__dict__

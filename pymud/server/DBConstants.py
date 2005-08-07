@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-$Id: DBConstants.py,v 1.1 2005/05/30 02:00:35 rwh Exp $
+$Id: DBConstants.py,v 1.2 2005/08/07 07:16:37 rwh Exp $
 
 Fieldnames or other things worth referring to in the database.
 """
@@ -37,14 +37,7 @@ RoomShortName = "RoomShortName"
 RoomLongName = "RoomLongName"
 RoomDescription = "RoomDescription"
 #AreaID
-Exit1Names = "Exit1Names"
-Exit1Room = "Exit1Room"
-Exit2Names = "Exit2Names"
-Exit2Room = "Exit2Room"
-Exit3Names = "Exit3Names"
-Exit3Room = "Exit3Room"
-Exit4Names = "Exit4Names"
-Exit4Room = "Exit4Room"
+Exits = "Exits"
 
 # Items
 Items = "Items"

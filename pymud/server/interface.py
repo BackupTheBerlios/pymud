@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-$Id: interface.py,v 1.1 2005/05/30 02:00:35 rwh Exp $
+$Id: interface.py,v 1.2 2005/08/07 07:16:37 rwh Exp $
 
 Data handlers and objects - IE, all hard-coded data and database access
 utility functions.
@@ -8,7 +8,7 @@ utility functions.
 import sha
 from types import ListType, TupleType
 from string import lower, strip
-from utils import pgDB
+from utils import pgDB, misc
 import server.Queries as Q
 import server.DBConstants as DC
 
@@ -98,27 +98,16 @@ def getUserData(cursor, userid, field = None):
 
 def getExits(cursor, roomid):
 	query = Q.GetExits % {DC.RoomID: roomid}
-	res = pgDB.fetchOne(cursor, query)
+	res = pgDB.fetchOneValue(cursor, query)
 	try:
-		name1, room1, name2, room2, \
-		name3, room3, name4, room4 = res
+		 exitDict = misc.getDict(res)
 	except TypeError:
 		# Area does not exist.
 		print "ERROR! User attempted to go to room %s, which, "\
 		"seemingly, does not exist." % roomid
 	exits = {}
-	if room1:
-		area = getArea(cursor, room1)
-		exits[lower(name1)] = room1, area
-	if room2:
-		area = getArea(cursor, room2)
-		exits[lower(name2)] = room2, area
-	if room3:
-		area = getArea(cursor, room3)
-		exits[lower(name3)] = room3, area
-	if room4:
-		area = getArea(cursor, room4)
-		exits[lower(name4)] = room4, area
+	for exit, data in exitDict.items():
+		exits[lower(exit)] = data.split('|')
 	return exits
 
 # Area/Room information
