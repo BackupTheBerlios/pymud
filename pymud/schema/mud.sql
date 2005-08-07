@@ -122,7 +122,6 @@ CREATE TABLE Rooms (
 	RoomDescription text,
 	RoomColour varchar(2) NOT NULL DEFAULT '`7',
 	AreaID integer NOT NULL DEFAULT 0,
-	RoomItems text,
 
 	-- Exits
 	Exits text,
@@ -164,8 +163,7 @@ INSERT INTO Rooms (
 	'You are in the restroom at Mobile Ave Station. It\'s messay, and generally pretty unpleasant. There are serveral toilet stalls along one wall and sinks opposite them. There\'s something scrawled on the back of the restroom door.',
 	'Platform=0|0'
 );
-
-INSERT INTO Items 
+INSERT INTO Items (ItemID, ItemLocation, ItemCount, ItemKeyWords, ItemDescription, ItemRoomDescription, ItemData)
 VALUES (
 	'00000001',
 	'0',
@@ -176,7 +174,7 @@ VALUES (
 	'need: DMG, to hit, Durability, colour, engraving, personalised name?, any enchantments, any procs, requirements'
 );
 
-INSERT INTO Items 
+INSERT INTO Items (ItemID, ItemLocation, ItemCount, ItemKeyWords, ItemDescription, ItemRoomDescription, ItemData)
 VALUES (
 	'00000002',
 	'0',
