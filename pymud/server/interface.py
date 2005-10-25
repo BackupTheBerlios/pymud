@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-$Id: interface.py,v 1.2 2005/08/07 07:16:37 rwh Exp $
+$Id: interface.py,v 1.3 2005/10/25 06:23:43 rwh Exp $
 
 Data handlers and objects - IE, all hard-coded data and database access
 utility functions.
@@ -209,13 +209,5 @@ GameStates = {
 Locations = {
 	"Welcome" : "`%Login:",
 	"Password" : "`%Password:",
-	"InGame" : "You are in a big room.\r\n",
+	"InGame" : "",
 }
-
-def motd():
-	# Print the message of the day. Or rather, return it.
-	message = """Welcome to The World.
-Please enjoy your stay, and try not to leave a mess.
-
-"""
-	return message
