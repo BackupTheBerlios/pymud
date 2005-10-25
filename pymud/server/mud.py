@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-$Id: mud.py,v 1.2 2005/08/07 07:16:37 rwh Exp $
+$Id: mud.py,v 1.3 2005/10/25 06:24:41 rwh Exp $
 
 Game Client Handler code class and supporting functions
 """
@@ -46,11 +46,11 @@ class GameClient(ClientHandler):
 	def realHandle(self, command):
 		command = command.strip()
 		cmdList = command.split(' ')
-		if self.place == "Welcome":
+		if self.state == "Welcome":
 			self.username = command
-			self.place = "Password"
+			self.state = "Password"
 			self.look()
-		elif self.place == "Password":
+		elif self.state == "Password":
 			password = SI.getPasswordHash(self.cursor, self.username)
 			if password == sha.new(command).hexdigest():
 				thread = SI.getThreadID(self.cursor, self.username)
@@ -66,17 +66,16 @@ class GameClient(ClientHandler):
 					SI.getUserData(self.cursor, self.username, DC.NickName)
 				self.userlevel = \
 					SI.getUserData(self.cursor, self.username, DC.UserLevel)
-				self.place = "InGame"
+				self.state = "InGame"
 				SI.setThreadID(self.cursor, self.username, self.threadid)
 				room = SI.getLocation(self.cursor, self.username)
 				area = SI.getArea(self.cursor, room)
 				self.realMove(area, room, DBUpdate = 0)
-				self.sendToSelf(SI.motd())
 				self.look()
 				return
 			self.username = ""
 			self.write("Incorrect username or password. Please try again.")
-			self.place = "Welcome"
+			self.state = "Welcome"
 			self.look()
 		else:
 			firstCommand = lower(cmdList[0])
@@ -107,7 +106,7 @@ class GameClient(ClientHandler):
 	def init(self):
 		self.cursor = self.server.getCursor()
 		self.state = SI.GameStates["PreLogin"]
-		self.place = "Welcome"
+		self.state = "Welcome"
 		self.username = ""
 		self.nickname = ""
 		self.fullname = ""
@@ -139,7 +138,7 @@ class GameClient(ClientHandler):
 		self.sendToSelf(getText)
 
 	def look(self, cmdList = []):
-		if self.place == "InGame":
+		if self.state == "InGame":
 			descr = colorise(SI.getRoomDescription(self.cursor, self.room))
 			self.sendToSelf(descr)
 			# Print exits
@@ -155,7 +154,7 @@ class GameClient(ClientHandler):
 				items = "\r\n" + "\r\n".join(items) + "\r\n"
 				self.sendToSelf(items)
 		else:
-			descr = colorise(SI.Locations.get(self.place))
+			descr = colorise(SI.Locations.get(self.state))
 			self.sendToSelf(descr)
 	
 	def emote(self, cmdList):
