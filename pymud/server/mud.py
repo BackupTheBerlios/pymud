@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-$Id: mud.py,v 1.3 2005/10/25 06:24:41 rwh Exp $
+$Id: mud.py,v 1.4 2005/10/25 06:39:21 rwh Exp $
 
 Game Client Handler code class and supporting functions
 """
@@ -43,14 +43,28 @@ valid_commands = {
 }
 
 class GameClient(ClientHandler):
+	"""
+	Our actual game client. The generic client-handler code (not specific to
+	this game) is in the ClientHandler clas, whcih we inherit from.
+
+	Most of our grunt work is done through the overloaded realHandle method,
+	with other methods being referenced from within that.
+	"""
 	def realHandle(self, command):
+		"""
+		Grunt work is done here. This is called every time a complete line
+		(terminating in a \r\n) is received by the handler loop. 'command' is
+		a full-line string, with no trailing newline characters.
+		"""
 		command = command.strip()
 		cmdList = command.split(' ')
 		if self.state == "Welcome":
+			# No username as yet, let's get one.
 			self.username = command
 			self.state = "Password"
 			self.look()
 		elif self.state == "Password":
+			# No password, let's get one.
 			password = SI.getPasswordHash(self.cursor, self.username)
 			if password == sha.new(command).hexdigest():
 				thread = SI.getThreadID(self.cursor, self.username)
@@ -78,6 +92,7 @@ class GameClient(ClientHandler):
 			self.state = "Welcome"
 			self.look()
 		else:
+			# We are in-game. Process the full command.
 			firstCommand = lower(cmdList[0])
 			if firstCommand in valid_commands.keys():
 				function = getattr(self, valid_commands[firstCommand])
@@ -112,6 +127,7 @@ class GameClient(ClientHandler):
 		self.fullname = ""
 		self.exits = {}
 		self.userlevel = -1
+		# Clear screen and reset cursor to 0,0
 		self.sendToSelf(colorise('`7`r0`c'))
 		self.look()
 	
