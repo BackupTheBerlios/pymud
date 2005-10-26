@@ -1,5 +1,6 @@
 #!/usr/bin/env python 
 """
+$Id: ansi.py,v 1.3 2005/10/26 06:09:59 rwh Exp $
 The Pythonic Mud
 Copyright (C) 2005 by Rohan Harris
 
