@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-$Id: mud.py,v 1.5 2005/10/26 06:20:55 rwh Exp $
+$Id: mud.py,v 1.6 2005/10/26 07:03:18 rwh Exp $
 Game Client Handler code class and supporting functions
 
 The Pythonic Mud
@@ -36,14 +36,25 @@ from utils import pgDB
 from utils import config
 from utils.ansi import colorise
 
-emote = "emote"
-look = "look"
-diction = "diction"
-quit = "quit"
-move = "move"
-stop = "stop"
-examine = "examine"
-get = "get"
+constants = """
+emote
+look
+diction
+quit
+move
+stop
+examine
+get
+
+USERNAME
+PASSWORD
+
+INGAME
+""".strip().split()
+
+g = globals()
+for item in constants:
+	g[item] = item
 
 valid_commands = {
 	"emote"		: emote,
@@ -74,12 +85,13 @@ class GameClient(ClientHandler):
 		"""
 		command = command.strip()
 		cmdList = command.split(' ')
-		if self.state == "Welcome":
+		if self.state == USERNAME:
 			# No username as yet, let's get one.
 			self.username = command
-			self.state = "Password"
+			self.state = PASSWORD
 			self.look()
-		elif self.state == "Password":
+				
+		elif self.state == PASSWORD:
 			# No password, let's get one.
 			password = SI.getPasswordHash(self.cursor, self.username)
 			if password == sha.new(command).hexdigest():
@@ -96,7 +108,7 @@ class GameClient(ClientHandler):
 					SI.getUserData(self.cursor, self.username, DC.NickName)
 				self.userlevel = \
 					SI.getUserData(self.cursor, self.username, DC.UserLevel)
-				self.state = "InGame"
+				self.state = INGAME
 				SI.setThreadID(self.cursor, self.username, self.threadid)
 				room = SI.getLocation(self.cursor, self.username)
 				area = SI.getArea(self.cursor, room)
@@ -105,9 +117,9 @@ class GameClient(ClientHandler):
 				return
 			self.username = ""
 			self.write("Incorrect username or password. Please try again.")
-			self.state = "Welcome"
+			self.state = USERNAME
 			self.look()
-		else:
+		elif self.state == INGAME:
 			# We are in-game. Process the full command.
 			firstCommand = lower(cmdList[0])
 			if firstCommand in valid_commands.keys():
@@ -136,8 +148,7 @@ class GameClient(ClientHandler):
 
 	def init(self):
 		self.cursor = self.server.getCursor()
-		self.state = SI.GameStates["PreLogin"]
-		self.state = "Welcome"
+		self.state = USERNAME
 		self.username = ""
 		self.nickname = ""
 		self.fullname = ""
@@ -170,7 +181,7 @@ class GameClient(ClientHandler):
 		self.sendToSelf(getText)
 
 	def look(self, cmdList = []):
-		if self.state == "InGame":
+		if self.state == INGAME:
 			descr = colorise(SI.getRoomDescription(self.cursor, self.room))
 			self.sendToSelf(descr)
 			# Print exits
@@ -186,7 +197,13 @@ class GameClient(ClientHandler):
 				items = "\r\n" + "\r\n".join(items) + "\r\n"
 				self.sendToSelf(items)
 		else:
-			descr = colorise(SI.Locations.get(self.state))
+			descr = None
+			if self.state == USERNAME:
+				descr = colorise("`%Login:")
+			elif self.state == PASSWORD:
+				descr = colorise("`%Password:")
+			else:
+				print "Unknown state - '%s'" % self.state
 			self.sendToSelf(descr)
 	
 	def emote(self, cmdList):
