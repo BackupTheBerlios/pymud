@@ -1,6 +1,6 @@
 #!/usr/bin/env python 
 """
-$Id: ansi.py,v 1.3 2005/10/26 06:09:59 rwh Exp $
+$Id: ansi.py,v 1.4 2005/10/26 06:56:38 rwh Exp $
 The Pythonic Mud
 Copyright (C) 2005 by Rohan Harris
 
@@ -20,8 +20,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 """
 from string import upper
 
-"""
-constants = "
+constants = """
 BLACK
 RED
 GREEN
@@ -46,7 +45,7 @@ CYAN_BG
 WHITE_BG
 
 CLEAR_SCR
-".strip().split()
+""".strip().split()
 
 g = globals()
 for item in constants:
@@ -67,19 +66,18 @@ ANSI_CODES = {
 	BOLD : '\033[1m',
 	REVERSE : '\033[2m',
 
-	BLACKBG : '\033[40m',
-	REDBG : '\033[41m',
-	GREENBG : '\033[42m',
-	YELLOWBG : '\033[43m',
-	BROWNBG : '\033[0;43m',
-	BLUEBG : '\033[44m',
-	MAGENTABG : '\033[45m',
-	CYANBG : '\033[46m',
-	WHITEBG : '\033[47m',
+	BLACK_BG : '\033[40m',
+	RED_BG : '\033[41m',
+	GREEN_BG : '\033[42m',
+	YELLOW_BG : '\033[43m',
+	BROWN_BG : '\033[0;43m',
+	BLUE_BG : '\033[44m',
+	MAGENTA_BG : '\033[45m',
+	CYAN_BG : '\033[46m',
+	WHITE_BG : '\033[47m',
 
-	CLEARSCR : '\033[2J\033[0;0f',
+	CLEAR_SCR : '\033[2J\033[0;0f',
 }
-"""
 
 def colorise(text, firstLetterCap = 0):
 	"""
@@ -179,7 +177,7 @@ def colorise(text, firstLetterCap = 0):
 				print "Incorrect colour code." 
 
 	if string:
-		string = RESET + string + RESET
+		string = ANSI_CODES[RESET] + string + ANSI_CODES[RESET]
 		return string
 	return text
 
