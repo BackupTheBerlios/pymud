@@ -1,49 +1,84 @@
 #!/usr/bin/env python 
-'''
-ansi.py
+"""
+The Pythonic Mud
+Copyright (C) 2005 by Rohan Harris
 
-ANSI Terminal Interface
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
-(C)opyright 2000 Jason Petrone <jp_py@demonseed.net>
-All Rights Reserved
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-Color Usage:
-  print RED + 'this is red' + RESET
-  print BOLD + GREEN + WHITEBG + 'this is bold green on white' + RESET
-'''
-################################
-# C O L O R  C O N S T A N T S #
-################################
-BLACK = '\033[30m'
-RED = '\033[31m'
-GREEN = '\033[32m'
-YELLOW = '\033[33m'
-BLUE = '\033[34m'
-MAGENTA = '\033[35m'
-CYAN = '\033[36m'
-WHITE = '\033[37m'
-
-RESET = '\033[40;37m'
-BOLD = '\033[1m'
-REVERSE = '\033[2m'
-
-BLACKBG = '\033[40m'
-REDBG = '\033[41m'
-GREENBG = '\033[42m'
-YELLOWBG = '\033[43m'
-BROWNBG = '\033[0;43m'
-BLUEBG = '\033[44m'
-MAGENTABG = '\033[45m'
-CYANBG = '\033[46m'
-WHITEBG = '\033[47m'
-
-CLEARSCR = '\033[2J\033[0;0f'
-
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+"""
 from string import upper
 
-#DEFAULTFR = WHITE
-#DEFAULTBG = BLACK
-#RESET = DEFAULTFR + DEFAULTBG
+"""
+constants = "
+BLACK
+RED
+GREEN
+YELLOW
+BLUE
+MAGENTA
+CYAN
+WHITE
+
+RESET
+BOLD
+REVERSE
+
+BLACK_BG
+RED_BG
+GREEN_BG
+YELLOW_BG
+BROWN_BG
+BLUE_BG
+MAGENTA_BG
+CYAN_BG
+WHITE_BG
+
+CLEAR_SCR
+".strip().split()
+
+g = globals()
+for item in constants:
+	g[item] = item
+
+# Extraneous, just here for reference
+ANSI_CODES = {
+	BLACK : '\033[30m',
+	RED : '\033[31m',
+	GREEN : '\033[32m',
+	YELLOW : '\033[33m',
+	BLUE : '\033[34m',
+	MAGENTA : '\033[35m',
+	CYAN : '\033[36m',
+	WHITE : '\033[37m',
+
+	RESET : '\033[40;37m',
+	BOLD : '\033[1m',
+	REVERSE : '\033[2m',
+
+	BLACKBG : '\033[40m',
+	REDBG : '\033[41m',
+	GREENBG : '\033[42m',
+	YELLOWBG : '\033[43m',
+	BROWNBG : '\033[0;43m',
+	BLUEBG : '\033[44m',
+	MAGENTABG : '\033[45m',
+	CYANBG : '\033[46m',
+	WHITEBG : '\033[47m',
+
+	CLEARSCR : '\033[2J\033[0;0f',
+}
+"""
 
 def colorise(text, firstLetterCap = 0):
 	"""
