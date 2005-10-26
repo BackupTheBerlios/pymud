@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-$Id: Server.py,v 1.1 2005/05/30 02:00:33 rwh Exp $
+$Id: Server.py,v 1.2 2005/10/26 06:20:55 rwh Exp $
 
 The actual game server and base handler classes.
 
@@ -14,6 +14,23 @@ The purpose of the two classes in this file are as follows:
 	both the TCP Socket handle to retrieve and handle data from the
 	client, and to also dole out data to the client that appears in
 	the child's in-tray.
+
+The Pythonic Mud
+Copyright (C) 2005 by Rohan Harris
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 """
 
 import socket, select, os, re, thread, threading, signal
