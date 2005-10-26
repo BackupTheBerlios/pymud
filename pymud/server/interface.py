@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-$Id: interface.py,v 1.4 2005/10/26 06:20:55 rwh Exp $
+$Id: interface.py,v 1.5 2005/10/26 07:04:13 rwh Exp $
 
 Data handlers and objects - IE, all hard-coded data and database access
 utility functions.
@@ -214,17 +214,3 @@ def getItemForUser(cursor, cmdList, roomID, username):
 			else:
 				desc = "You pickup a %s\r\n" %cmd
 	return desc
-			
-# Game states
-GameStates = {
-	"PreLogin": "PreLogin",
-	"Password": "Password",
-	"InGame": "InGame",
-}
-
-# Location Descriptions
-Locations = {
-	"Welcome" : "`%Login:",
-	"Password" : "`%Password:",
-	"InGame" : "",
-}
