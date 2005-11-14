@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-$Id: Server.py,v 1.2 2005/10/26 06:20:55 rwh Exp $
+$Id: Server.py,v 1.3 2005/11/14 00:55:04 rwh Exp $
 
 The actual game server and base handler classes.
 
@@ -124,6 +124,7 @@ class ClientHandler(StreamRequestHandler):
 							self.realHandle(line)
 			print "Client %s disconnected." % self.threadid
 			self.handle_exit()
+			self.finish()
 		except socket.error, msg:
 			print "Disconnected from client at %s." % self.client_address[0]
 			self.handle_exit()
