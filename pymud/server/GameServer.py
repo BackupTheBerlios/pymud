@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-$Id: GameServer.py,v 1.2 2005/10/26 06:20:55 rwh Exp $
+$Id: GameServer.py,v 1.3 2006/04/18 13:14:31 rwh Exp $
 
 The actual game server handler. This class is derived from the
 ThreadedServer class in server.py, but contains game-specific functions,
@@ -109,6 +109,9 @@ class GameServer(ThreadedServer):
 	
 	def getCursor(self):
 		return self.db.cursor()
+	
+	def commitToDatabase(self):
+		self.db.commit()
 
 	def sendMessage(self, threadid, text):
 		text = colorise(text, firstLetterCap = 1)
