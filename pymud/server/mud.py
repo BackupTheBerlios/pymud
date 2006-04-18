@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-$Id: mud.py,v 1.6 2005/10/26 07:03:18 rwh Exp $
+$Id: mud.py,v 1.7 2006/04/18 14:14:45 stips Exp $
 Game Client Handler code class and supporting functions
 
 The Pythonic Mud
@@ -110,7 +110,7 @@ class GameClient(ClientHandler):
 					SI.getUserData(self.cursor, self.username, DC.UserLevel)
 				self.state = INGAME
 				SI.setThreadID(self.cursor, self.username, self.threadid)
-				room = SI.getLocation(self.cursor, self.username)
+				room = SI.getUserLocation(self.cursor, self.username)
 				area = SI.getArea(self.cursor, room)
 				self.realMove(area, room, DBUpdate = 0)
 				self.look()
@@ -166,8 +166,8 @@ class GameClient(ClientHandler):
 	# Game Commands
 	def examine(self, cmdList = []):
 		if len(cmdList) < 2:
-			itemText = "You pat yourself down and note that all your body" \
-					" parts are in the correct places.. or are they?\r\n"
+			itemText = "You examine yourself. It might be "\
+					 "time to lay off the pastries.\r\n"
 		else:
 			itemText = SI.getItemDescription(self.cursor, self.room, cmdList)
 		self.sendToSelf(itemText)
