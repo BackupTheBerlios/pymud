@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-$Id: Queries.py,v 1.4 2006/04/18 12:20:33 stips Exp $
+$Id: Queries.py,v 1.5 2006/04/18 13:48:20 stips Exp $
 Database queries.
 
 The Pythonic Mud
@@ -138,7 +138,14 @@ GetUserItems = """
 SELECT i.%(ItemID)s, ui.%(UserItemCount)s
 FROM %(Items)s as i, %(User_Items)s as ui
 WHERE i.%(UserID)s = ui.%%(UserID)s
-"""
+""" % DC.__dict__
+
+GetUserItemCount = """
+SELECT %(UserItemCount)s
+FROM %(User_Items)s
+WHERE %(ItemID)s = '%%(ItemID)s'
+AND %(UserID)s = '%%(UserID)s'
+""" % DC.__dict__
 
 # Update Queries.
 UpdateRoomItemCount = """
@@ -155,13 +162,20 @@ WHERE %(ItemID)s = '%%(ItemID)s'
 AND %(UserID)s = '%%(UserID)s'
 """ % DC.__dict__
 
-UpdateUserInventory = """
+UpdateUserItem = """
+UPDATE User_Items
+SET %(UserItemCount)s = '%%(ItemCount)s'
+WHERE %(UserID)s = '%%(UserID)s'
+AND %(ItemID)s = '%%(ItemID)s'
+""" % DC.__dict__
+
+CreateUserItem = """
 INSERT INTO User_Items
 (%(UserID)s, %(ItemID)s, %(UserItemCount)s)
 VALUES
 ('%%(UserID)s', '%%(ItemID)s', '%%(ItemCount)s')
 """ % DC.__dict__
-
+ 
 UpdateRoomID = """
 Update %(Users)s
 Set %(RoomID)s = %%(RoomID)s
