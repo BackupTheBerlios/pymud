@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-$Id: Queries.py,v 1.3 2005/10/26 06:20:55 rwh Exp $
+$Id: Queries.py,v 1.4 2006/04/18 12:20:33 stips Exp $
 Database queries.
 
 The Pythonic Mud
@@ -86,8 +86,8 @@ SELECT %(AreaID)s FROM %(Rooms)s
 WHERE %(RoomID)s = '%%(RoomID)s'
 """ % DC.__dict__
 
-GetLocation = """
-SELECT %(Location)s
+GetUserRoomID = """
+SELECT %(RoomID)s
 FROM %(Users)s
 WHERE %(UserID)s = '%%(UserID)s'
 """ % DC.__dict__
@@ -95,60 +95,75 @@ WHERE %(UserID)s = '%%(UserID)s'
 GetUsersInRoom = """
 SELECT %(UserID)s
 FROM %(Users)s
-WHERE %(Location)s = '%%(Location)s'
+WHERE %(RoomID)s = '%%(RoomID)s'
 """ % DC.__dict__
 
 GetThreadsInRoom = """
 SELECT %(CurrentThreadID)s
 FROM %(Users)s
-WHERE %(Location)s = '%%(Location)s'
+WHERE %(RoomID)s = '%%(RoomID)s'
 AND %(CurrentThreadID)s != ''
 """ % DC.__dict__
 
 GetItemsInRoom = """
 SELECT %(ItemRoomDescription)s
 FROM %(Items)s
-WHERE %(ItemLocation)s = '%%(RoomID)s'
-AND %(ItemCount)s != 0 
-AND %(ItemCount)s != '-1'
+WHERE %(ItemID)s in (
+	SELECT %(ItemID)s 
+	FROM %(Room_Items)s
+	WHERE %(RoomID)s = '%%(RoomID)s'
+	AND %(RoomItemCount)s != 0
+	AND %(RoomItemCount)s != '-1');
 """ % DC.__dict__
 
 GetItemDescription = """
 SELECT %(ItemDescription)s, %(ItemKeyWords)s
 FROM %(Items)s
-WHERE %(ItemLocation)s = '%%(RoomID)s'
-AND %(ItemCount)s != 0
+WHERE %(ItemID)s in (
+	SELECT %(ItemID)s 
+	FROM %(Room_Items)s
+	WHERE %(RoomID)s = '%%(RoomID)s'
+	AND %(RoomItemCount)s != 0);
 """ % DC.__dict__
 
 GetItemsForUser = """
-SELECT %(ItemID)s, %(ItemKeyWords)s, %(ItemCount)s
-FROM %(Items)s
-WHERE %(ItemLocation)s = '%%(RoomID)s'
-AND %(ItemCount)s != 0
-AND %(ItemCount)s != '-1'
+SELECT i.%(ItemID)s, i.%(ItemKeyWords)s, ri.%(RoomItemCount)s
+FROM %(Items)s as i, %(Room_Items)s as ri
+WHERE i.%(ItemID)s = ri.%(ItemID)s
+AND ri.%(RoomID)s = '%%(RoomID)s'
+AND ri.%(RoomItemCount)s NOT in (0,-1)
 """ % DC.__dict__
 
-GetUserInventory = """
-SELECT %(Inventory)s
-FROM %(Users)s
-WHERE %(UserID)s = '%%(UserID)s'
-""" % DC.__dict__
+GetUserItems = """
+SELECT i.%(ItemID)s, ui.%(UserItemCount)s
+FROM %(Items)s as i, %(User_Items)s as ui
+WHERE i.%(UserID)s = ui.%%(UserID)s
+"""
 
 # Update Queries.
-UpdateItemCount = """
-UPDATE %(Items)s
-SET %(ItemCount)s = '%%(ItemCount)s'
+UpdateRoomItemCount = """
+UPDATE %(Room_Items)s
+SET %(RoomItemCount)s = '%%(ItemCount)s'
 WHERE %(ItemID)s = '%%(ItemID)s'
+AND %(RoomID)s = '%%(RoomID)s'
+""" % DC.__dict__
+
+UpdateUserItemCount = """
+UPDATE %(User_Items)s
+SET %(UserItemCount)s = '%%(ItemCount)s'
+WHERE %(ItemID)s = '%%(ItemID)s'
+AND %(UserID)s = '%%(UserID)s'
 """ % DC.__dict__
 
 UpdateUserInventory = """
-UPDATE %(Users)s
-SET %(Inventory)s = '%%(Inventory)s'
-WHERE %(UserID)s = '%%(UserID)s';
+INSERT INTO User_Items
+(%(UserID)s, %(ItemID)s, %(UserItemCount)s)
+VALUES
+('%%(UserID)s', '%%(ItemID)s', '%%(ItemCount)s')
 """ % DC.__dict__
 
-UpdateLocation = """
+UpdateRoomID = """
 Update %(Users)s
-Set %(Location)s = %%(Location)s
-WHERE %(UserID)s = '%%(UserID)s';
+Set %(RoomID)s = %%(RoomID)s
+WHERE %(UserID)s = '%%(UserID)s'
 """ % DC.__dict__
