@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-$Id: DBConstants.py,v 1.3 2005/10/26 06:20:55 rwh Exp $
+$Id: DBConstants.py,v 1.4 2006/04/18 12:18:05 stips Exp $
 Fieldnames or other things worth referring to in the database.
 
 The Pythonic Mud
@@ -58,10 +58,16 @@ Exits = "Exits"
 # Items
 Items = "Items"
 ItemID = "ItemID"
-ItemLocation = "ItemLocation"
-ItemCount = "ItemCount"
 ItemKeyWords = "ItemKeyWords"
 ItemDescription = "ItemDescription"
 ItemRoomDescription = "ItemRoomDescription"
 ItemData = "ItemData"
+
+#Room_Items
+Room_Items = "Room_Items"
+RoomItemCount = "RoomItemCount"
+
+#User_Items
+User_Items = "User_Items"
+UserItemCount = "UserItemCount"
 
