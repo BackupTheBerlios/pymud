@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-$Id: GameServer.py,v 1.3 2006/04/18 13:14:31 rwh Exp $
+$Id: GameServer.py,v 1.4 2006/04/18 14:06:05 stips Exp $
 
 The actual game server handler. This class is derived from the
 ThreadedServer class in server.py, but contains game-specific functions,
@@ -28,7 +28,7 @@ import os, threading, signal
 import server.DBConstants as DC
 from utils import pgDB
 from utils.ansi import colorise
-from server.interface import updateLocation, clearLoggedInUsers, getThreadsInRoom, getThreads
+from server.interface import updateUserLocation, clearLoggedInUsers, getThreadsInRoom, getThreads
 from server.Server import ThreadedServer
 from Actions import ActionHandler
 from Combat import ACTION_MAP as combatActions, VERB_MAP as combatVerbs
@@ -85,7 +85,7 @@ class GameServer(ThreadedServer):
 	
 	def changeLocation(self, threadid, userid, area, room, DBUpdate = 1):
 		if DBUpdate:
-			updateLocation(self.cursor, userid, room)
+			updateUserLocation(self.cursor, userid, room)
 		if not self.clients.has_key(userid):
 			# Player has just entered the game.
 			print "%s has entered the game world in room %s." % (userid, room)
