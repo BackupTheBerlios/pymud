@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-$Id: interface.py,v 1.6 2006/04/18 13:51:11 stips Exp $
+$Id: interface.py,v 1.7 2006/04/18 14:13:48 stips Exp $
 
 Data handlers and objects - IE, all hard-coded data and database access
 utility functions.
@@ -42,12 +42,12 @@ def getThreadsInRoom(cursor, roomid):
 	query = Q.GetThreadsInRoom % {DC.RoomID: roomid}
 	return pgDB.fetchList(cursor, query)
 
-def updateLocation(cursor, userid, location):
+def updateUserLocation(cursor, userid, roomid):
 	queryDict = {
 		DC.UserID: userid,
-		DC.Location: location,
+		DC.RoomID: roomid,
 	}
-	query = Q.UpdateLocation % queryDict
+	query = Q.UpdateUserRoomID % queryDict
 	pgDB.execute(cursor, query)
 
 def getUserLocation(cursor, userid):
@@ -171,7 +171,9 @@ def getItemForUser(cursor, cmdList, roomID, userID):
 	for itemID, keywords, roomItemCount in res:
 		keywords = keywords.split(",")
 		if cmd in keywords:
-			if int(roomItemCount) > 0:
+			if int(roomItemCount) == -1:
+				desc = "I can't do that Dave.\r\n"
+			elif int(roomItemCount) > 0:
 				# Remove one of the item(s) from the room it was in.
 				itemCount = int(roomItemCount) - 1
 				updateCount = Q.UpdateRoomItemCount % {"ItemID":itemID,
