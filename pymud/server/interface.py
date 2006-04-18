@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-$Id: interface.py,v 1.5 2005/10/26 07:04:13 rwh Exp $
+$Id: interface.py,v 1.6 2006/04/18 13:51:11 stips Exp $
 
 Data handlers and objects - IE, all hard-coded data and database access
 utility functions.
@@ -39,7 +39,7 @@ def getUsersInRoom(cursor, roomid):
 	return pgDB.fetch(cursor, query)
 
 def getThreadsInRoom(cursor, roomid):
-	query = Q.GetThreadsInRoom % {DC.Location: roomid}
+	query = Q.GetThreadsInRoom % {DC.RoomID: roomid}
 	return pgDB.fetchList(cursor, query)
 
 def updateLocation(cursor, userid, location):
@@ -50,11 +50,11 @@ def updateLocation(cursor, userid, location):
 	query = Q.UpdateLocation % queryDict
 	pgDB.execute(cursor, query)
 
-def getLocation(cursor, userid):
+def getUserLocation(cursor, userid):
 	queryDict = {
 		DC.UserID: userid,
 	}
-	query = Q.GetLocation % queryDict
+	query = Q.GetUserRoomID % queryDict
 	return pgDB.fetchOneValue(cursor, query)
 
 def clearLoggedInUsers(cursor):
@@ -160,57 +160,44 @@ def getItemDescription(cursor, roomid, cmd):
 			desc = description + "\r\n"
 	return desc
 
-def getItemForUser(cursor, cmdList, roomID, username):
+def getItemForUser(cursor, cmdList, roomID, userID):
 	"""
-	Gives a user the item they tried to pickup if possible.
+	Takes an item from a room and places it in the users inventory.
 	"""
 	query = Q.GetItemsForUser % {DC.RoomID: roomID}
 	res = pgDB.fetch(cursor, query)
-	print "res = %s" %res
 	cmd = cmdList[1]
-	print "cmd = %s" %cmd
-	desc = "You screw your eyes shut and wish really hard for a %s\r\n" %cmd
-	for itemID, keywords, itemCount in res:
+	desc = "You screw your eyes shut and wish really hard for a %s.\r\n" %cmd
+	for itemID, keywords, roomItemCount in res:
 		keywords = keywords.split(",")
-		print "keywords %s" %keywords
 		if cmd in keywords:
-			print "cmd in keywords"
-			print "itemCount %s"  %itemCount
-			if int(itemCount) > 0:
-				print "hello" 
-				# FIXME: Do all these queries in one transaction.
-				# Get The users existing inventory.
-				InventoryQ = Q.GetUserInventory % {"UserID":username}
-				inventory = pgDB.fetchOne(cursor, InventoryQ)
+			if int(roomItemCount) > 0:
+				# Remove one of the item(s) from the room it was in.
+				itemCount = int(roomItemCount) - 1
+				updateCount = Q.UpdateRoomItemCount % {"ItemID":itemID,
+												"ItemCount":roomItemCount,
+												"RoomID":roomID}
+				pgDB.executeOne(cursor, updateCount)
 
-				# Remove one of the item from the room it was in.
-				itemCount = int(itemCount) - 1
-				UpdateCount = Q.UpdateItemCount % {"ItemID":itemID,
-												"ItemCount":itemCount,}
-				pgDB.executeOne(cursor, UpdateCount)
+				#Create/update a stack of items if the user already has one.
+				userItemCountQ = Q.GetUserItemCount % { "ItemID" : itemID,
+														"UserID" : userID}
+				userItemCount = pgDB.fetchOne(cursor, userItemCountQ)
 
-				# Place one of the item into the users inventory.
-				newInventory = []
-				existing = ""
-				if inventory[0]:
-					print "inventory %s" %repr(inventory)
-					inventory = inventory.split(",")
-					for item, count in inventory[0].split(":"):
-						if itemID == item:
-							count = int(count) + 1
-							existing = "1"
-							newInventory.append("%s:%s" %(itemID, str(count)))
-						else:
-							newInventory.append("%s:%s" %(itemID, count))
-							
-				if not existing:
-					newInventory.append("%s:1" %itemID)
-				
-				newInventory = ",".join(newInventory)
-				
-				UpdateInvQ = Q.UpdateUserInventory % {"UserID":username,
-													"Inventory":newInventory,}
-				pgDB.executeOne(cursor, UpdateInvQ)
-			else:
-				desc = "You pickup a %s\r\n" %cmd
+				#increment the item count and update the database
+				if not userItemCount:
+					userItemCount = 1
+
+					updateInvQ = Q.CreateUserItem % {"UserID":userID,
+													"ItemID": itemID,
+													"ItemCount": userItemCount}
+				else:
+					userItemCount = int(userItemCount[0]) + 1
+
+					updateInvQ = Q.UpdateUserItem % {"UserID":userID,
+													"ItemID": itemID,
+													"ItemCount": userItemCount}
+
+				res	= pgDB.executeOne(cursor, updateInvQ)
+				desc = "You pickup the %s.\r\n" %cmd
 	return desc
