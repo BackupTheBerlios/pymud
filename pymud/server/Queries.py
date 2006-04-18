@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-$Id: Queries.py,v 1.5 2006/04/18 13:48:20 stips Exp $
+$Id: Queries.py,v 1.6 2006/04/18 14:09:07 stips Exp $
 Database queries.
 
 The Pythonic Mud
@@ -131,7 +131,7 @@ SELECT i.%(ItemID)s, i.%(ItemKeyWords)s, ri.%(RoomItemCount)s
 FROM %(Items)s as i, %(Room_Items)s as ri
 WHERE i.%(ItemID)s = ri.%(ItemID)s
 AND ri.%(RoomID)s = '%%(RoomID)s'
-AND ri.%(RoomItemCount)s NOT in (0,-1)
+AND ri.%(RoomItemCount)s != 0
 """ % DC.__dict__
 
 GetUserItems = """
@@ -176,7 +176,7 @@ VALUES
 ('%%(UserID)s', '%%(ItemID)s', '%%(ItemCount)s')
 """ % DC.__dict__
  
-UpdateRoomID = """
+UpdateUserRoomID = """
 Update %(Users)s
 Set %(RoomID)s = %%(RoomID)s
 WHERE %(UserID)s = '%%(UserID)s'
